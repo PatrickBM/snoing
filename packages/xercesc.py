@@ -33,6 +33,6 @@ class XercesC(conditionallibrarypackage.ConditionalLibraryPackage):
         source_path = os.path.join(self._system.get_install_path(), "%s-source" % self._name)
         self._system.untar_file(self._tar_name, source_path, 1)
         self._system.execute_command("./configure", cwd=source_path)
-        self._system.execute_command("make", cwd=source_path)
+        self._system.execute_command("make", args=['-j8'], cwd=source_path)     # compile w/ 8 threads for faster testing
         self._system.execute_command("make", ["install", "prefix=%s" % self.get_install_path()], 
                                      cwd=source_path)

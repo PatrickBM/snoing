@@ -49,7 +49,8 @@ class Geant4Post5(localpackage.LocalPackage):
         if not os.path.exists(self.get_install_path()):
             os.makedirs(self.get_install_path())
         cmake_opts = ["-DCMAKE_INSTALL_PREFIX=%s" % self.get_install_path(), 
-                      "-DGEANT4_INSTALL_DATA=ON"]
+                      "-DGEANT4_INSTALL_DATA=ON",
+                      "-DGEANT4_BUILD_CXXSTD=c++11"]
         # Now set the environment, if needed
         env = {}
         if self._system.get_install_mode() == installmode.Graphical:
@@ -67,7 +68,7 @@ class Geant4Post5(localpackage.LocalPackage):
         if self._dependency_paths["cmake-2.8.12"] is not None: # Special cmake installed
             cmake_command = "%s/bin/cmake" % self._dependency_paths["cmake-2.8.12"]
         self._system.configure_command(cmake_command, cmake_opts, self.get_install_path(), env, config_type="geant4")
-        self._system.execute_command("make", [], self.get_install_path(), env)
+        self._system.execute_command("make", ["-j8"], self.get_install_path(), env)     # compile w/ 8 threads to speed up testing
         self._system.execute_command("make", ['install'], self.get_install_path(), env)
         
 
