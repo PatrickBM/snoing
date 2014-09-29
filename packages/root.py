@@ -50,3 +50,41 @@ class Root(localpackage.LocalPackage):
             args = ['--enable-minuit2', '--enable-roofit',  '--enable-python', '--enable-mathmore','--enable-gdml']
         self._system.configure_command(args=args, cwd=self.get_install_path(),config_type='root')
         self._system.execute_command('make', cwd=self.get_install_path())
+
+
+
+class RootDev(Root):
+    """ version to clone root repo & keep up to date w/ CERN's origin/master branch"""
+    def __init__(self, name, system, tar_name):
+        """ Initialise the root package."""
+        super(Root, self).__init__(name, system)
+        self._tar_name = tar_name
+    def get_dependencies(self):
+        """ Return the dependency names as a list of names."""
+        if self._system.get_install_mode() == installmode.Grid:
+            return ["make", "g++", "gcc", "ld", "python", 
+                    ["python-dev", "python-dev-2.4", "python-dev-2.6"]]
+        else:
+            return ["make", "g++", "gcc", "ld", "X11", "Xpm", "Xft", "Xext", "python", 
+                    ["python-dev", "python-dev-2.4", "python-dev-2.6"]]
+    def _is_downloaded(self):
+        """ Check the tar ball has been downloaded."""
+        return self._system.file_exists(self._tar_name)
+    def _is_installed(self):
+        """ Check if root is installed."""
+        if self._system.get_install_mode() == installmode.Grid: #no X11, no bit/root
+            return self._system.file_exists("root.exe", os.path.join(self.get_install_path(), "bin"))
+        else:
+            return os.path.exists(os.path.join(self.get_install_path(), "bin/root"))
+    def _download(self):
+        """ clone repo from cern."""
+        self._system.execute_command("git", ["clone", "http://root.cern.ch/git/root.git", self.get_install_path()], verbose=True)
+    def _install(self):
+        """ Install root."""
+        if self._system.get_install_mode() == installmode.Grid:
+            args = ['--enable-minuit2', '--enable-roofit',  '--enable-python', '--enable-mathmore',
+                    '--disable-castor', '--disable-rfio', '--disable-x11']
+        else:
+            args = ['--enable-minuit2', '--enable-roofit',  '--enable-python', '--enable-mathmore','--enable-gdml']
+        self._system.configure_command(args=args, cwd=self.get_install_path(),config_type='root')
+        self._system.execute_command('make', args=['-j8'], cwd=self.get_install_path())
