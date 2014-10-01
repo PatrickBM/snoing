@@ -119,7 +119,7 @@ class RatDevelopment(Rat):
         return os.path.exists(self.get_install_path())
     def _download(self):
         """ Git clone rat-dev."""
-        self._system.execute_command("git", ["clone", "git@github.com:snoplus/rat.git", self.get_install_path()], 
+        self._system.execute_command("git", ["clone", "git@github.com:PatrickBM/rat.git", self.get_install_path()], 
                                      verbose=True)
     def _write_env_file(self):
         """ Write the environment file required for the current rat-dev."""
