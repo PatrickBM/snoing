@@ -85,6 +85,6 @@ class RootDev(Root):
             args = ['--enable-minuit2', '--enable-roofit',  '--enable-python', '--enable-mathmore',
                     '--disable-castor', '--disable-rfio', '--disable-x11']
         else:
-            args = ['--enable-minuit2', '--enable-roofit',  '--enable-python', '--enable-mathmore','--enable-gdml']
+            args = ['--all', '--enable-cxx14']
         self._system.configure_command(args=args, cwd=self.get_install_path(),config_type='root')
         self._system.execute_command('make', args=['-j8'], cwd=self.get_install_path())
